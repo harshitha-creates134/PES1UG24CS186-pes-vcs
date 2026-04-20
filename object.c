@@ -199,9 +199,10 @@ int object_read(const ObjectID *id, ObjectType *type_out, void **data_out, size_
     // Step 5: Extract data portion (after the null byte)
     uint8_t *data_start = null_pos + 1;
     *len_out = total - (data_start - buf);
-    *data_out = malloc(*len_out);
-    if (!*data_out) { free(buf); return -1; }
-    memcpy(*data_out, data_start, *len_out);
-    free(buf);
-    return 0;
+	*data_out = malloc(*len_out + 1);   // +1 for null terminator
+	if (!*data_out) { free(buf); return -1; }
+	memcpy(*data_out, data_start, *len_out);
+	((char *)*data_out)[*len_out] = '\0';  // null terminate
+	free(buf);
+	return 0;
 }
